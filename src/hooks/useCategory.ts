@@ -1,23 +1,48 @@
-import { atom, useAtom } from "jotai";
-import { CategoryAtom } from "../types/atoms";
+import { PrimitiveAtom, useAtom, useAtomValue } from "jotai";
+import { Category, Counter } from "../types/atoms";
+import { useCallback, useState } from "react";
+import { focusAtom } from "jotai-optics";
+import { splitAtom, useAtomCallback } from "jotai/utils";
 
-export const useCategory = (categoryAtom: CategoryAtom) => {
-  const [state, setState] = useAtom(categoryAtom);
+const useCategory = (categoryAtom: PrimitiveAtom<Category>) => {
+  const [titleAtom] = useState(
+    focusAtom(categoryAtom, (optic) => optic.prop("title"))
+  );
+  const title = useAtomValue(titleAtom);
+  const changeTitle = useAtomCallback(
+    useCallback(
+      (_get, set, val: string) => {
+        set(titleAtom, val);
+      },
+      [titleAtom]
+    )
+  );
 
-  const updateTitle = (value: string) =>
-    setState((prev) => ({ ...prev, title: value }));
+  const [countersAtomsAtom] = useState(
+    splitAtom(focusAtom(categoryAtom, (optic) => optic.prop("counters")))
+  );
+  const [countersAtoms, dispatch] = useAtom(countersAtomsAtom);
 
-  const deleteCounterByKey = (key: string) =>
-    setState((prev) => ({
-      ...prev,
-      counters: prev.counters.filter((counter) => counter.toString() !== key),
-    }));
+  const insertCounter = useCallback(
+    (
+      counter: Counter = {
+        count: 0,
+        title: "カウンター",
+      }
+    ) => {
+      dispatch({ type: "insert", value: counter });
+    },
+    [dispatch]
+  );
 
-  const addNewCounter = () =>
-    setState((prev) => ({
-      ...prev,
-      counters: [...prev.counters, atom({ title: "カウンター", count: 0 })],
-    }));
+  const removeCounter = useCallback(
+    (atom: PrimitiveAtom<Counter>) => {
+      dispatch({ atom, type: "remove" });
+    },
+    [dispatch]
+  );
 
-  return { state, updateTitle, deleteCounterByKey, addNewCounter };
+  return { title, changeTitle, countersAtoms, insertCounter, removeCounter };
 };
+
+export default useCategory;

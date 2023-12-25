@@ -1,14 +1,21 @@
 import { FC } from "react";
 import { Divider, Input, Button, Join } from "react-daisyui";
-import { CounterAtom } from "../types/atoms";
-import { useCounter } from "../hooks/useCounter";
+import { Counter } from "../types/atoms";
+import { PrimitiveAtom } from "jotai";
+import useCounter from "../hooks/useCounter";
 
-const Counter: FC<{ counterAtom: CounterAtom; onClickDelete: () => void }> = ({
-  counterAtom,
-  onClickDelete,
-}) => {
-  const { state, updateTitle, incrementCount, decrementCount, resetCount } =
-    useCounter(counterAtom);
+const CounterCard: FC<{
+  counterAtom: PrimitiveAtom<Counter>;
+  onClickDelete: () => void;
+}> = ({ counterAtom, onClickDelete }) => {
+  const {
+    count,
+    decrementCount,
+    incrementCount,
+    resetCount,
+    changeTitle,
+    title,
+  } = useCounter(counterAtom);
   return (
     <div className="p-2">
       <h3 className="flex">
@@ -17,8 +24,8 @@ const Counter: FC<{ counterAtom: CounterAtom; onClickDelete: () => void }> = ({
           color="secondary"
           type="text"
           className="text-xl"
-          value={state.title}
-          onChange={(e) => updateTitle(e.target.value)}
+          value={title}
+          onChange={(e) => changeTitle(e.target.value)}
         />
         <Button size="md" color="ghost" onClick={onClickDelete}>
           <svg
@@ -38,13 +45,13 @@ const Counter: FC<{ counterAtom: CounterAtom; onClickDelete: () => void }> = ({
         </Button>
       </h3>
       <Join className="grid grid-cols-3 py-2">
-        <Button className="text-4xl" onClick={() => decrementCount(1)}>
+        <Button className="text-4xl" onClick={() => decrementCount()}>
           -1
         </Button>
         <Button color="accent" className="text-4xl">
-          {state.count}
+          {count}
         </Button>
-        <Button className="text-4xl" onClick={() => incrementCount(1)}>
+        <Button className="text-4xl" onClick={() => incrementCount()}>
           +1
         </Button>
       </Join>
@@ -58,4 +65,4 @@ const Counter: FC<{ counterAtom: CounterAtom; onClickDelete: () => void }> = ({
   );
 };
 
-export default Counter;
+export default CounterCard;

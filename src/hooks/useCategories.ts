@@ -1,49 +1,38 @@
-import { atom, useAtom } from "jotai";
-import { useAtomCallback } from "jotai/utils";
-import { useEffect } from "react";
-import { categoriesAtom } from "../state/categories";
-import { CounterAtom } from "../types/atoms";
+import { atomWithStorage, splitAtom } from "jotai/utils";
+import { Category } from "../types/atoms";
+import { PrimitiveAtom, useAtom } from "jotai";
+import { useCallback } from "react";
 
-export const useCategories = () => {
-  const [state, setState] = useAtom(categoriesAtom);
+const baseCategoriesAtom = atomWithStorage<Category[]>("categories", []);
+const categoriesAtomsAtom = splitAtom(baseCategoriesAtom);
 
-  const readCategories = useAtomCallback((get) => {
-    const categories = get(categoriesAtom);
-    return categories.map((categoryAtom) => {
-      const category = get(categoryAtom);
-      return {
-        ...category,
-        counters: category.counters.map((counterAtom) => {
-          const counter = get(counterAtom);
-          return counter;
-        }),
-      };
-    });
-  });
+const useCategories = () => {
+  const [categories, dispatch] = useAtom(categoriesAtomsAtom);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const categories = readCategories();
-      localStorage.setItem("categories", JSON.stringify(categories));
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [readCategories]);
-
-  const addNewCategory = () =>
-    setState((prev) => {
-      const counters: CounterAtom[] = [atom({ title: "カウンター", count: 0 })];
-      const newCategoryAtom = atom({
+  const insertCategory = useCallback(
+    (
+      category: Category = {
         title: "カテゴリー",
-        counters,
-      });
-      return [...prev, newCategoryAtom];
-    });
+        counters: [{ title: "カウンター", count: 0 }],
+      }
+    ) => {
+      dispatch({ type: "insert", value: category });
+    },
+    [dispatch]
+  );
 
-  const deleteCategoryByKey = (key: string) => {
-    setState((prev) => prev.filter((category) => category.toString() !== key));
+  const removeCategory = useCallback(
+    (atom: PrimitiveAtom<Category>) => {
+      dispatch({ type: "remove", atom });
+    },
+    [dispatch]
+  );
+
+  return {
+    categories,
+    insertCategory,
+    removeCategory,
   };
-
-  return { state, addNewCategory, deleteCategoryByKey };
 };
+
+export default useCategories;
