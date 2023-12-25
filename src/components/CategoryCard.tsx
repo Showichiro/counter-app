@@ -1,15 +1,17 @@
 import { FC } from "react";
 import { Divider, Input, Button } from "react-daisyui";
-import { CategoryAtom } from "../types/atoms";
-import Counter from "./Counter";
-import { useCategory } from "../hooks/useCategory";
+import { Category } from "../types/atoms";
+import CounterCard from "./CounterCard";
+import { PrimitiveAtom } from "jotai";
+import useCategory from "../hooks/useCategory";
 
-const Category: FC<{
-  categoryAtom: CategoryAtom;
+const CategoryCard: FC<{
+  categoryAtom: PrimitiveAtom<Category>;
   onClickDelete: () => void;
 }> = ({ categoryAtom, onClickDelete }) => {
-  const { state, updateTitle, deleteCounterByKey, addNewCounter } =
+  const { title, changeTitle, countersAtoms, insertCounter, removeCounter } =
     useCategory(categoryAtom);
+
   return (
     <div className="py-2">
       <h2 className="flex">
@@ -18,8 +20,8 @@ const Category: FC<{
           size="lg"
           type="text"
           className="text-2xl"
-          value={state.title}
-          onChange={(e) => updateTitle(e.target.value)}
+          value={title}
+          onChange={(e) => changeTitle(e.target.value)}
         />
         <Button size="lg" color="ghost" onClick={onClickDelete}>
           <svg
@@ -39,14 +41,18 @@ const Category: FC<{
         </Button>
       </h2>
       <div className="p-2">
-        {state.counters.map((counterAtom) => (
-          <Counter
+        {countersAtoms.map((counterAtom) => (
+          <CounterCard
             key={`${counterAtom}`}
             counterAtom={counterAtom}
-            onClickDelete={() => deleteCounterByKey(`${counterAtom}`)}
+            onClickDelete={() => removeCounter(counterAtom)}
           />
         ))}
-        <Button className="py-4" color="info" onClick={addNewCounter}>
+        <Button
+          className="py-4"
+          color="info"
+          onClick={() => insertCounter({ title: "カウンター", count: 0 })}
+        >
           カウンターを増やす
         </Button>
       </div>
@@ -55,4 +61,4 @@ const Category: FC<{
   );
 };
 
-export default Category;
+export default CategoryCard;

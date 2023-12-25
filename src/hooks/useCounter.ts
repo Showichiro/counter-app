@@ -1,25 +1,62 @@
-import { useAtom } from "jotai";
-import { CounterAtom } from "../types/atoms";
+import { useAtomValue } from "jotai";
+import { Counter } from "../types/atoms";
+import { PrimitiveAtom } from "jotai/vanilla";
+import { focusAtom } from "jotai-optics";
+import { useCallback, useState } from "react";
+import { useAtomCallback } from "jotai/utils";
 
-export const useCounter = (counterAtom: CounterAtom) => {
-  const [state, setState] = useAtom(counterAtom);
+const useCounter = (counterAtom: PrimitiveAtom<Counter>) => {
+  const [titleAtom] = useState(
+    focusAtom(counterAtom, (optic) => optic.prop("title"))
+  );
+  const [countAtom] = useState(
+    focusAtom(counterAtom, (optic) => optic.prop("count"))
+  );
+  const title = useAtomValue(titleAtom);
+  const changeTitle = useAtomCallback(
+    useCallback(
+      (_get, set, val: string) => {
+        set(titleAtom, val);
+      },
+      [titleAtom]
+    )
+  );
+  const count = useAtomValue(countAtom);
 
-  const updateTitle = (title: string) =>
-    setState((prev) => ({ ...prev, title }));
+  const incrementCount = useAtomCallback(
+    useCallback(
+      (_get, set, val: number = 1) => {
+        set(countAtom, (c) => c + val);
+      },
+      [countAtom]
+    )
+  );
 
-  const incrementCount = (val: number) =>
-    setState((prev) => ({ ...prev, count: prev.count + val }));
+  const decrementCount = useAtomCallback(
+    useCallback(
+      (_get, set, val: number = 1) => {
+        set(countAtom, (c) => c - val);
+      },
+      [countAtom]
+    )
+  );
 
-  const decrementCount = (val: number) =>
-    setState((prev) => ({ ...prev, count: prev.count - val }));
-
-  const resetCount = () => setState((prev) => ({ ...prev, count: 0 }));
+  const resetCount = useAtomCallback(
+    useCallback(
+      (_get, set) => {
+        set(countAtom, 0);
+      },
+      [countAtom]
+    )
+  );
 
   return {
-    state,
-    updateTitle,
+    title,
+    changeTitle,
+    count,
     incrementCount,
     decrementCount,
     resetCount,
   };
 };
+export default useCounter;
