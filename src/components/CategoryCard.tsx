@@ -22,8 +22,9 @@ const CategoryCard: FC<{
           className="text-2xl"
           value={title}
           onChange={(e) => changeTitle(e.target.value)}
+          aria-label="category title"
         />
-        <Button size="lg" color="ghost" onClick={onClickDelete}>
+        <Button size="lg" color="ghost" onClick={onClickDelete} aria-label="delete category">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"

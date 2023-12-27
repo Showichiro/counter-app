@@ -26,8 +26,9 @@ const CounterCard: FC<{
           className="text-xl"
           value={title}
           onChange={(e) => changeTitle(e.target.value)}
+          aria-label="counter title"
         />
-        <Button size="md" color="ghost" onClick={onClickDelete}>
+        <Button size="md" color="ghost" onClick={onClickDelete} aria-label="delete counter">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
