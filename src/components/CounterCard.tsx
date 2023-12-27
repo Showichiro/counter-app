@@ -44,15 +44,21 @@ const CounterCard: FC<{
           </svg>
         </Button>
       </h3>
-      <Join className="grid grid-cols-3 py-2">
-        <Button className="text-4xl" onClick={() => decrementCount()}>
+      <Join className="grid grid-cols-5 py-2">
+        <Button className="text-2xl" onClick={() => decrementCount(10)}>
+          -10
+        </Button>
+        <Button className="text-2xl" onClick={() => decrementCount()}>
           -1
         </Button>
         <Button color="accent" className="text-4xl">
           {count}
         </Button>
-        <Button className="text-4xl" onClick={() => incrementCount()}>
+        <Button className="text-2xl" onClick={() => incrementCount()}>
           +1
+        </Button>
+        <Button className="text-2xl" onClick={() => incrementCount(10)}>
+          +10
         </Button>
       </Join>
       <div className="pt-2">
