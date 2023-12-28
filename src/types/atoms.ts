@@ -3,3 +3,8 @@ export type Category = {
   title: string;
   counters: Counter[];
 };
+
+export type Sheet = {
+  id: number;
+  name: string;
+};

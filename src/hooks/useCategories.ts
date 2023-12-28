@@ -7,7 +7,8 @@ const baseCategoriesAtom = atomWithStorage<Category[]>("categories", []);
 const categoriesAtomsAtom = splitAtom(baseCategoriesAtom);
 
 const useCategories = () => {
-  const [categories, dispatch] = useAtom(categoriesAtomsAtom);
+  const [categories] = useAtom(baseCategoriesAtom);
+  const [categoryAtoms, dispatch] = useAtom(categoriesAtomsAtom);
 
   const insertCategory = useCallback(
     (
@@ -30,6 +31,7 @@ const useCategories = () => {
 
   return {
     categories,
+    categoryAtoms,
     insertCategory,
     removeCategory,
   };
