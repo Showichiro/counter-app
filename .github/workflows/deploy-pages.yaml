@@ -40,7 +40,7 @@ jobs:
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: 7eb6cebe88e550655714e4d58c8fcc1c
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: counter-app
           directory: pages
           # Optional: Enable this if you want to have GitHub Deployments triggered
