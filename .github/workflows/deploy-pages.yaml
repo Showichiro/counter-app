@@ -23,7 +23,7 @@ jobs:
       - name: Setup Pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 8.5.1
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
