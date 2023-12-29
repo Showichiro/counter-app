@@ -20,6 +20,7 @@ const route = app
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "https://showichiro.github.io",
+        "https://counter-app-aei.pages.dev"
       ],
     })
   )
