@@ -1,9 +1,6 @@
 name: deploy
 
-on:
-  push:
-    branches: ['main']
-  workflow_dispatch:
+on: [push]
 
 permissions:
   contents: read
@@ -29,7 +26,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          # pnpmのキャッシュを効かすために設定
           cache: pnpm
       - name: pnpm install
         run: pnpm install
@@ -44,8 +40,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: counter-app
           directory: pages
-          # Optional: Enable this if you want to have GitHub Deployments triggered
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # Optional: Switch what branch you are publishing to.
-          # By default this will be the branch which triggered this workflow
-          branch: main
